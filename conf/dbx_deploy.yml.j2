@@ -1,0 +1,23 @@
+build:
+  python: "pip"
+
+environments:
+  default:
+    workflows:
+      - name: "Test gso_ml_toolkit_dbx"
+        job_clusters:
+          - job_cluster_key: "test_cluster"
+            new_cluster:
+              spark_version: "12.2.x-cpu-ml-scala2.12"
+              num_workers: 1
+              node_type_id: "Standard_D4s_v5"
+              spark_env_vars:
+                DATABRICKS_HOST: "{{ env['DATABRICKS_HOST'] }}"
+                DATABRICKS_TOKEN: {{ '"{{secrets/keyvault/DatabricksToken}}"' }}
+                GIT_SHA: "{{ env['GIT_SHA'] }}"
+        tasks:
+          - task_key: "Test"
+            job_cluster_key: "test_cluster"
+            spark_python_task:
+              python_file: "file://scripts/test_dbx_job.py"
+              parameters: ["--run_id", "{{parent_run_id}}", "--job_id", "{{job_id}}"]
