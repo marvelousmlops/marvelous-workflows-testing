@@ -1,0 +1,30 @@
+name: Test Reusable Workflow (ref:dev)
+on:
+  workflow_dispatch:
+    inputs:
+      distinct_id:
+        description: "Unique identifier for the run"
+
+jobs:
+  # this job is needed for the parent job to de able to detect workflow run id and later its status
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
+        run: echo ${{ github.event.inputs.distinct_id }}
+
+  test_dbx_job_deploy:
+    uses: marvelousmlops/marvelous-workflows/.github/workflows/databricks_job_dbx.yml@develop
+    with:
+        deployment-file: "conf/dbx_deployment.yml.j2"
+        toolkit-ref: "feature/dbx-workflow"
+        run-job-now: "True"
+    secrets: inherit
+
+  wait_for_test_dbx_job_completion:
+    uses: marvelousmlops/marvelous-workflows/.github/workflows/check_dbr_job_run.yml@develop
+    needs: test_dbx_job_deploy
+    with:
+      run_id: ${{ needs.test_dbx_job_deploy.outputs.run_id }}
+      toolkit_ref: "feature/dbx-workflow"
+    secrets: inherit
