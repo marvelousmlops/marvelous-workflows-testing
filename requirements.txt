@@ -1,2 +1,0 @@
-pyyaml
-git+https://${GIT_TOKEN}@github.com/RoyalAholdDelhaize/gso-ml-toolkit@master

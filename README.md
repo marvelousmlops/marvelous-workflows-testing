@@ -8,7 +8,7 @@ the only way to do proper integration testing is by running the workflows in oth
 
 ## Workflows
 
-### test_dbx_reusableworkflow.yml 
+### test_dbx_reusable_wf.yml 
 
 This workflow is intended to run on workflow dispatch. 
 It is used to test databricks_job_dbx.yml workflow from marvelous-workflows repository.
